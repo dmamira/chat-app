@@ -2,8 +2,6 @@ import React,{Component} from 'react';
 import {firebase} from '../src/firebase';
 
 class HOC extends React.Component {
-    that = this;
-
     constructor(props) {
         super(props);
         this.state = {

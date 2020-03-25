@@ -1,5 +1,4 @@
 import * as firebase from 'firebase';
-import sweet from 'firestore-sweet';
 
 var firebaseConfig = {
     apiKey: "AIzaSyAtYFbfbkueEfHAApH-VqU3noaVrh_aewM",
@@ -15,7 +14,6 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-const db = sweet(firebase.firestore);
 const firestore = firebase.firestore();
 
-export {firebase,db,firestore}
+export {firebase,firestore}

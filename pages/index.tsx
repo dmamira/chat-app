@@ -8,6 +8,8 @@ class Home extends React.Component<any, any>{
         signInOptions: [
             // Leave the lines as is for the providers you want to offer your users.
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            "microsoft.com",
+            "yahoo.com"
         ],
     };
     render(){
@@ -15,7 +17,9 @@ class Home extends React.Component<any, any>{
             <div className="wrapper">
                 <StyledFirebaseAuth firebaseAuth={firebase.auth()} uiConfig={this.uiConfig}/>
                 <style jsx>{`
-           
+                .wrapper{
+                width:100%;
+                }
                 `}</style>
             </div>
         )
