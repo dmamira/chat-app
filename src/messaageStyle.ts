@@ -13,17 +13,10 @@ const message:style = {
     paddingRight:"20px",
     marginBottom:"10px"
 }
-/*const myMessage:style = {
-    float:"right",
-}*/
 
 const top:style = {
     marginTop:"10px"
 }
 
-/*const name:style = {
-    marginLeft:"40px",
-    fontSize:"10pt"
-}*/
 
 export {message,top}
