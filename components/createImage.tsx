@@ -16,9 +16,15 @@ interface style {
 }
 
 class Image extends React.Component<Props, State> {
+    constructor(props) {
+        super(props);
+    }
     name: style;
     divStyleMine: style;
-
+    image:style={
+        minWidth:"100px",
+        maxWidth:"300px"
+    }
     render() {
         if (!this.props.isMine) {
             this.divStyleMine = {
@@ -42,15 +48,8 @@ class Image extends React.Component<Props, State> {
             <div>
                 <p style={this.name}>{this.props.name}</p>
                 <div style={this.divStyleMine}>
-                    <img src={this.props.url}/>
+                    <img src={this.props.url} style={this.image}/>
                 </div>
-                {/*language=CSS*/}
-                <style jsx>{`
-                    img {
-                        width: 200px;
-                    }
-                `}
-                </style>
             </div>
         )
     }

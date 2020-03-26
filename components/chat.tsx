@@ -4,6 +4,10 @@ import {firebase, firestore} from '../src/firebase';
 import CreateMessage from '../components/createMessage';
 import Dropzone from 'react-dropzone';
 import {style} from "@material-ui/system";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faImages } from '@fortawesome/free-solid-svg-icons'
+import FileInputComponent from 'react-file-input-previews-base64'
+import {type} from "os";
 
 interface State {
     input: string,
@@ -47,6 +51,19 @@ class Service extends React.Component<any, State> {
             })
         }
     }
+    onSelect = (files) => {
+        Object.keys(files).forEach(function(result){
+            const typeLength = files[result].type.length + 13;
+            console.log(files[result])
+            console.log(files[result].base64.substring(typeLength));
+            var time = new Date().getTime();
+            var storageRef = firebase.storage().ref().child(time+"-image");
+            storageRef.putString((files[result].base64.substring(typeLength)),"base64").then(async function(result){
+                var url = await result.ref.getDownloadURL();
+                firestore.collection('room1').add({name:firebase.auth().currentUser.displayName,creatOn:new Date(),image:url}).then(function(){})
+            })
+        })
+    }
 
     onDrop = (files) => {
         files.forEach(async function (result) {
@@ -58,11 +75,12 @@ class Service extends React.Component<any, State> {
             await reader.readAsDataURL(result);
             reader.onload = function (e) {
                 if (typeof e.target.result === "string") {
-                    storageRef.putString(e.target.result, 'data_url').then(function (result) {
+                    storageRef.putString(e.target.result, 'data_url').then(async function (result) {
+                        const url = await result.ref.getDownloadURL();
                         firestore.collection('room1').add({
                             name: firebase.auth().currentUser.displayName,
                             creatOn: new Date(),
-                            image: childName + "-image"
+                            image: url
                         }).then(function () {
                             console.log("success")
                         })
@@ -71,11 +89,15 @@ class Service extends React.Component<any, State> {
             }
         })
     };
+    icon={
+        textAlign:"left"
+    }
+
     render() {
         return (
             <Dropzone onDrop={this.onDrop}>
                 {({getRootProps, isDragActive}) => (
-                    <div {...getRootProps({className: 'input1'})} className="wrapper">
+                    <div {...getRootProps()} className="wrapper">
                         <div className="container">
                             <CreateMessage chatData={this.props.onedata}/>
                         </div>
@@ -93,26 +115,54 @@ class Service extends React.Component<any, State> {
                             .wrapper {
                                 display: flex;
                                 flex-direction: column;
-                                min-height: 100vh;
+                                min-height: 100vh;,
                             }
                             .input {
                                 resize: none;
                                 width: 99%;
                                 margin-top: auto;
-                                margin-right: auto;
-                                margin-left: auto;
+                            }
+                            .input2{
+                                resize: none;
+                                margin-top: auto;
+                                text-align:center;
+                                width:100%;
                             }
                             .container {
-                                margin-top: 20px;
+                                margin-top: 40px;
                             }
                             .input1{
                             background-color:black;
                             }
+                            .file{
+                            background-color:#c8c8c8;
+                            width:99%;
+                            margin:auto;
+                            padding-left:20px;
+                            box-sizing:border-box;
+                         
+                            }
+                            .icon{
+                            margin-left:50px
+                            }
+                            .clear{
+                            clear:left;
+                            }
+                            a:link{
+                            color:black
+                            }
+                          
+                            a:active{
+                            color:red
+                            }
                         `}
                         </style>
+                        <div className="input2">
+                            <div className="file"><FileInputComponent imagePreview={false} multiple={true} callbackFunction={(files) => {this.onSelect(files)}} accept="image/*" buttonComponent={<a href="javascript:void(0)"><FontAwesomeIcon icon={faImages} size="lg" pull="left" onClick={() => console.log("clicked")}/></a>} labelText=""/><div className="clear"></div></div>
                         <textarea id="text-area" className="input" rows={5} value={this.state.input} onChange={(e) => {
                             this.handleStateChange(e, "input")
                         }} onKeyUp={this.submit}/>
+                        </div>
                     </div>
                 )}
             </Dropzone>
