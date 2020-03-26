@@ -1,5 +1,6 @@
 {
   "name":"chat-with-nextjs",
   "version": 2,
-  "alias": "chat.dai-blockchain.tech"
+  "alias": "chat.dai-blockchain.tech",
+  "files": ["/src/firebase.ts"]
 }

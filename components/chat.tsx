@@ -82,7 +82,6 @@ class Service extends React.Component<any, State> {
                             creatOn: new Date(),
                             image: url
                         }).then(function () {
-                            console.log("success")
                         })
                     })
                 }
