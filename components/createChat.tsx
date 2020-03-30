@@ -68,15 +68,21 @@ class Chat extends React.Component<Props, State>{
                 width:"50px",
                 borderRadius:"50%",
                 position:"relative",
-                right:"130px",
-                bottom:"40px"
+                top:"55px",
+                marginTop:"-55px"
             }
+        }
+        let icon;
+        if(this.props.icon){
+            icon = this.props.icon
+        }else{
+            icon = "https://firebasestorage.googleapis.com/v0/b/chat-app-with-next.appspot.com/o/no_icon.png?alt=media&token=6c5f8b3f-8421-4719-aaa9-9ae92009397a";
         }
         return(
             <div style={top}>
                 <div>
+                    <img src={icon} style={this.icon}/>
                     <p style={this.name}>{this.props.name}</p>
-                    <img src={this.props.icon} style={this.icon}/>
                 <div style={Object.assign(this.othersMessage,message,this.marginMessage,this.topBackground)}>
                     <p>{this.props.message}</p>
                 </div>

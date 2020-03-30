@@ -11,11 +11,11 @@ const message:style = {
     minHeight:"50px",
     maxWidth:"768px",
     paddingRight:"20px",
-    marginBottom:"10px"
+    marginBottom:"10px",
 }
 
 const top:style = {
-    marginTop:"10px",
+    marginTop:"0px",
     marginLeft:"10px"
 }
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {top} from "../src/messaageStyle";
 
 interface Props {
     url: string,
@@ -22,10 +23,7 @@ class Image extends React.Component<Props, State> {
     }
     name: style;
     divStyleMine: style;
-    image:style={
-        minWidth:"100px",
-        maxWidth:"300px"
-    }
+    image:style;
     icon:style
     render() {
         if (!this.props.isMine) {
@@ -35,18 +33,23 @@ class Image extends React.Component<Props, State> {
             }
             this.name = {
                 fontSize: "10pt",
-                marginLeft: "55px"
+                marginLeft: "55px",
             }
             this.icon = {
                 width:"50px",
                 borderRadius:"50%",
                 position:"relative",
-                top:"70px"
+                top:"55px",
+                marginTop:"-55px"
+            }
+            this.image={
+                minWidth:"100px",
+                maxWidth:"300px",
             }
         } else {
             this.divStyleMine = {
                 textAlign: "right",
-                marginRight: "40px"
+                marginRight: "40px",
             }
             this.name = {
                 display: "none"
@@ -54,10 +57,20 @@ class Image extends React.Component<Props, State> {
             this.icon = {
                 display:"none"
             }
+            this.image={
+                minWidth:"100px",
+                maxWidth:"300px",
+            }
+        }
+        let icon;
+        if(this.props.icon){
+            icon = this.props.icon
+        }else{
+            icon = "https://firebasestorage.googleapis.com/v0/b/chat-app-with-next.appspot.com/o/no_icon.png?alt=media&token=6c5f8b3f-8421-4719-aaa9-9ae92009397a";
         }
         return (
-            <div>
-                <img src={this.props.icon ? this.props.icon : "https://firebasestorage.googleapis.com/v0/b/chat-app-with-next.appspot.com/o/no_icon.png?alt=media&token=6c5f8b3f-8421-4719-aaa9-9ae92009397a"} style={this.icon}/>
+            <div style={top}>
+                <img src={icon} style={this.icon}/>
                 <p style={this.name}>{this.props.name}</p>
                 <div style={this.divStyleMine}>
                     <img src={this.props.url} style={this.image}/>
