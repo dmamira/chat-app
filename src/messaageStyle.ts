@@ -15,7 +15,8 @@ const message:style = {
 }
 
 const top:style = {
-    marginTop:"10px"
+    marginTop:"10px",
+    marginLeft:"10px"
 }
 
 

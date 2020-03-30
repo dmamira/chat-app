@@ -4,8 +4,8 @@ import {firebase, firestore} from '../src/firebase';
 import CreateMessage from '../components/createMessage';
 import Dropzone from 'react-dropzone';
 import {style} from "@material-ui/system";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImages } from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faImages} from '@fortawesome/free-solid-svg-icons'
 import FileInputComponent from 'react-file-input-previews-base64'
 import {type} from "os";
 
@@ -38,7 +38,8 @@ class Service extends React.Component<any, State> {
             firestore.collection('room1').add({
                 message: this.state.input,
                 name: firebase.auth().currentUser.displayName,
-                creatOn: new Date()
+                creatOn: new Date(),
+                icon: firebase.auth().currentUser.photoURL
             }).then(() => {
                 this.setState({
                     input: ''
@@ -51,16 +52,23 @@ class Service extends React.Component<any, State> {
             })
         }
     }
+
     onSelect = (files) => {
-        Object.keys(files).forEach(function(result){
+        Object.keys(files).forEach(function (result) {
             const typeLength = files[result].type.length + 13;
             console.log(files[result])
             console.log(files[result].base64.substring(typeLength));
             var time = new Date().getTime();
-            var storageRef = firebase.storage().ref().child(time+"-image");
-            storageRef.putString((files[result].base64.substring(typeLength)),"base64").then(async function(result){
+            var storageRef = firebase.storage().ref().child(time + "-image");
+            storageRef.putString((files[result].base64.substring(typeLength)), "base64").then(async function (result) {
                 var url = await result.ref.getDownloadURL();
-                firestore.collection('room1').add({name:firebase.auth().currentUser.displayName,creatOn:new Date(),image:url}).then(function(){})
+                firestore.collection('room1').add({
+                    name: firebase.auth().currentUser.displayName,
+                    creatOn: new Date(),
+                    image: url,
+                    icon:firebase.auth().currentUser.photoURL
+                }).then(function () {
+                })
             })
         })
     }
@@ -80,7 +88,8 @@ class Service extends React.Component<any, State> {
                         firestore.collection('room1').add({
                             name: firebase.auth().currentUser.displayName,
                             creatOn: new Date(),
-                            image: url
+                            image: url,
+                            icon:firebase.auth().currentUser.photoURL
                         }).then(function () {
                         })
                     })
@@ -88,9 +97,6 @@ class Service extends React.Component<any, State> {
             }
         })
     };
-    icon={
-        textAlign:"left"
-    }
 
     render() {
         return (
@@ -114,53 +120,64 @@ class Service extends React.Component<any, State> {
                             .wrapper {
                                 display: flex;
                                 flex-direction: column;
-                                min-height: 100vh;,
+                                min-height: 100vh;
                             }
+
                             .input {
                                 resize: none;
                                 width: 99%;
                                 margin-top: auto;
                             }
-                            .input2{
+
+                            .input2 {
                                 resize: none;
                                 margin-top: auto;
-                                text-align:center;
-                                width:100%;
+                                text-align: center;
+                                width: 100%;
                             }
-                            .container {
-                                margin-top: 40px;
+
+                            .input1 {
+                                background-color: black;
                             }
-                            .input1{
-                            background-color:black;
+
+                            .file {
+                                background-color: #c8c8c8;
+                                width: 99%;
+                                margin: auto;
+                                padding-left: 20px;
+                                box-sizing: border-box;
                             }
-                            .file{
-                            background-color:#c8c8c8;
-                            width:99%;
-                            margin:auto;
-                            padding-left:20px;
-                            box-sizing:border-box;
-                         
+
+                            .clear {
+                                clear: left;
                             }
-                            .icon{
-                            margin-left:50px
+
+                            a:link {
+                                color: black
                             }
-                            .clear{
-                            clear:left;
+
+                            a:active {
+                                color: red
                             }
-                            a:link{
-                            color:black
-                            }
-                          
-                            a:active{
-                            color:red
+                            .container{
+                            margin-top:30px
                             }
                         `}
                         </style>
                         <div className="input2">
-                            <div className="file"><FileInputComponent imagePreview={false} multiple={true} callbackFunction={(files) => {this.onSelect(files)}} accept="image/*" buttonComponent={<a href="javascript:void(0)"><FontAwesomeIcon icon={faImages} size="lg" pull="left" onClick={() => console.log("clicked")}/></a>} labelText=""/><div className="clear"></div></div>
-                        <textarea id="text-area" className="input" rows={5} value={this.state.input} onChange={(e) => {
-                            this.handleStateChange(e, "input")
-                        }} onKeyUp={this.submit}/>
+                            <div className="file"><FileInputComponent imagePreview={false} multiple={true}
+                                                                      callbackFunction={(files) => {
+                                                                          this.onSelect(files)
+                                                                      }} accept="image/*" buttonComponent={<a
+                                href="javascript:void(0)"><FontAwesomeIcon icon={faImages} size="lg" pull="left"
+                                                                           onClick={() => console.log("clicked")}/></a>}
+                                                                      labelText=""/>
+                                <div className="clear"></div>
+                            </div>
+                            <textarea id="text-area" className="input" rows={5} value={this.state.input}
+                                      onChange={(e) => {
+                                          this.handleStateChange(e, "input")
+                                      }} onKeyUp={this.submit}/>
                         </div>
                     </div>
                 )}

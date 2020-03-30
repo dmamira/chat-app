@@ -5,6 +5,7 @@ interface Props {
     createOn: number,
     name: string,
     isMine: boolean;
+    icon?:string
 }
 
 interface State {
@@ -25,27 +26,38 @@ class Image extends React.Component<Props, State> {
         minWidth:"100px",
         maxWidth:"300px"
     }
+    icon:style
     render() {
         if (!this.props.isMine) {
             this.divStyleMine = {
                 textAlign: "left",
-                marginLeft: "40px"
+                marginLeft: "60px"
             }
             this.name = {
                 fontSize: "10pt",
-                marginLeft: "30px"
+                marginLeft: "55px"
+            }
+            this.icon = {
+                width:"50px",
+                borderRadius:"50%",
+                position:"relative",
+                top:"70px"
             }
         } else {
             this.divStyleMine = {
                 textAlign: "right",
-                marginRight:"40px"
+                marginRight: "40px"
             }
-            this.name={
+            this.name = {
+                display: "none"
+            }
+            this.icon = {
                 display:"none"
             }
         }
         return (
             <div>
+                <img src={this.props.icon ? this.props.icon : "https://firebasestorage.googleapis.com/v0/b/chat-app-with-next.appspot.com/o/no_icon.png?alt=media&token=6c5f8b3f-8421-4719-aaa9-9ae92009397a"} style={this.icon}/>
                 <p style={this.name}>{this.props.name}</p>
                 <div style={this.divStyleMine}>
                     <img src={this.props.url} style={this.image}/>
