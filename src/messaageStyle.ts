@@ -9,7 +9,6 @@ const message:style = {
     boxSizing:"border-box",
     paddingLeft:"20px",
     minHeight:"50px",
-    maxWidth:"768px",
     paddingRight:"20px",
     marginBottom:"10px",
 }

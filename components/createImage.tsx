@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {top} from "../src/messaageStyle";
+import MediaQuery from "react-responsive";
 
 interface Props {
     url: string,
@@ -24,7 +25,8 @@ class Image extends React.Component<Props, State> {
     name: style;
     divStyleMine: style;
     image:style;
-    icon:style
+    icon:style;
+    imagePhone:style;
     render() {
         if (!this.props.isMine) {
             this.divStyleMine = {
@@ -45,6 +47,10 @@ class Image extends React.Component<Props, State> {
             this.image={
                 minWidth:"100px",
                 maxWidth:"300px",
+            }
+            this.imagePhone = {
+                minWidth:"70px",
+                maxWidth:"200px"
             }
         } else {
             this.divStyleMine = {
@@ -72,9 +78,16 @@ class Image extends React.Component<Props, State> {
             <div style={top}>
                 <img src={icon} style={this.icon}/>
                 <p style={this.name}>{this.props.name}</p>
+                <MediaQuery query="(min-width:401px)">
                 <div style={this.divStyleMine}>
                     <img src={this.props.url} style={this.image}/>
                 </div>
+                </MediaQuery>
+                <MediaQuery query="(max-width:400px)">
+                    <div style={this.divStyleMine}>
+                        <img src={this.props.url} style={this.imagePhone}/>
+                    </div>
+                </MediaQuery>
             </div>
         )
     }

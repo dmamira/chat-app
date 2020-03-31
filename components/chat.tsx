@@ -14,8 +14,10 @@ interface State {
     name: string,
     file: any
 }
-
-class Service extends React.Component<any, State> {
+interface Props{
+    query:string
+}
+class Service extends React.Component<Props, State> {
     constructor(props) {
         super(props);
         this.state = {
@@ -24,6 +26,8 @@ class Service extends React.Component<any, State> {
             file: []
         }
         this.submit = this.submit.bind(this);
+        this.onDrop = this.onDrop.bind(this);
+        this.onSelect = this.onSelect.bind(this);
     }
 
     handleStateChange(e, name) {
@@ -35,7 +39,7 @@ class Service extends React.Component<any, State> {
     submit(e) {
         if (e.keyCode === 13) {
             e.preventDefault();
-            firestore.collection('room1').add({
+            firestore.collection('rooms').doc(this.props.query).collection("messages").add({
                 message: this.state.input,
                 name: firebase.auth().currentUser.displayName,
                 creatOn: new Date(),
@@ -53,16 +57,15 @@ class Service extends React.Component<any, State> {
         }
     }
 
-    onSelect = (files) => {
+    onSelect(files){
+        const query = this.props.query;
         Object.keys(files).forEach(function (result) {
             const typeLength = files[result].type.length + 13;
-            console.log(files[result])
-            console.log(files[result].base64.substring(typeLength));
             var time = new Date().getTime();
             var storageRef = firebase.storage().ref().child(time + "-image");
-            storageRef.putString((files[result].base64.substring(typeLength)), "base64").then(async function (result) {
+            storageRef.putString((files[result].base64.substring(typeLength)), "base64").then(async (result) => {
                 var url = await result.ref.getDownloadURL();
-                firestore.collection('room1').add({
+                firestore.collection('rooms').doc(query).collection("messages").add({
                     name: firebase.auth().currentUser.displayName,
                     creatOn: new Date(),
                     image: url,
@@ -74,18 +77,18 @@ class Service extends React.Component<any, State> {
     }
 
     onDrop = (files) => {
+        const query = this.props.query
         files.forEach(async function (result) {
-            var date = new Date();
-            var childName = date.getTime();
-            var storageRef = firebase.storage().ref().child(childName + "-image");
-            var encoded;
-            var reader = new FileReader();
+            const date = new Date();
+            const childName = date.getTime();
+            const storageRef = firebase.storage().ref().child(childName + "-image");
+            const reader = new FileReader();
             await reader.readAsDataURL(result);
             reader.onload = function (e) {
                 if (typeof e.target.result === "string") {
-                    storageRef.putString(e.target.result, 'data_url').then(async function (result) {
+                    storageRef.putString(e.target.result, 'data_url').then(async (result) =>  {
                         const url = await result.ref.getDownloadURL();
-                        firestore.collection('room1').add({
+                        firestore.collection('rooms').doc(query).collection("messages").add({
                             name: firebase.auth().currentUser.displayName,
                             creatOn: new Date(),
                             image: url,
@@ -104,7 +107,7 @@ class Service extends React.Component<any, State> {
                 {({getRootProps, isDragActive}) => (
                     <div {...getRootProps()} className="wrapper">
                         <div className="container">
-                            <CreateMessage chatData={this.props.onedata}/>
+                            <CreateMessage query={this.props.query}/>
                         </div>
                         <style>{`
                     body {
