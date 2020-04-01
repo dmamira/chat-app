@@ -4,6 +4,7 @@ interface Props {
     name:string,
     description:string
 }
+
 class InRoomInfo extends React.Component<Props, any> {
     render() {
         return (
@@ -20,7 +21,6 @@ class InRoomInfo extends React.Component<Props, any> {
                     .description{
                     margin-top:10px
                     }
-
                     div {
                         max-width: 400px;
                         box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 5px;

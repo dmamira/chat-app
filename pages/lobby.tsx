@@ -63,30 +63,19 @@ class Lobby extends React.Component<Props, State> {
     }
 
     roomIn = async () => {
-        let check = false;
-        let allowedRoomCheck = false;
-        let newAllowedRoom: string[];
+        let newAllowedRoom = [this.state.existingRoomId];
         const userDoc = await firestore.collection("users").doc(firebase.auth().currentUser.uid).get();
-        if(!typeof userDoc.data() === undefined ) {
-            if(!typeof userDoc.data().allowedRoom === undefined) {
-                userDoc.data().allowedRoom.forEach((one) => {
-                    if (one == this.state.existingRoomId) {
-                        allowedRoomCheck = true;
-                    }
-                })
-                if(!allowedRoomCheck){
-                    newAllowedRoom = [];
-                    newAllowedRoom = [userDoc.data().allowedRoom]
-                    newAllowedRoom.push(this.state.existingRoomId);
-                }
-            }else{
-                newAllowedRoom = [this.state.existingRoomId];
+        if (userDoc.data() && userDoc.data().allowedRoom) {
+            const allowedRoomCheck = userDoc.data().allowedRoom.some((one) => {
+                return one == this.state.existingRoomId;
+            })
+            if (!allowedRoomCheck) {
+                newAllowedRoom = userDoc.data().allowedRoom
+                newAllowedRoom.push(this.state.existingRoomId);
             }
-        }else{
-            newAllowedRoom = [this.state.existingRoomId];
         }
         firestore.collection("rooms").doc(this.state.existingRoomId).collection("roomInfo").doc("roomInfo").get().then(async (doc) => {
-            check = doc.exists
+            const check = doc.exists
             if (check) {
                 const writeAllowedMember = async () => {
                     if (!isAlreadyIn) {
@@ -94,32 +83,24 @@ class Lobby extends React.Component<Props, State> {
                         await firestore.collection("rooms").doc(this.state.existingRoomId).collection("roomInfo").doc("roomInfo").set({
                             allowedMember: member
                         }, {merge: true})
+                        await firestore.collection("users").doc(firebase.auth().currentUser.uid).set({allowedRoom: newAllowedRoom}, {merge: true})
                     }
                 }
                 const member: string[] = doc.data().allowedMember;
-                let isAlreadyIn;
-                member.forEach(function (one) {
-                    if (one == firebase.auth().currentUser.uid) {
-                        isAlreadyIn = true
-                    }
+                const isAlreadyIn = member.some(function (one) {
+                    return one == firebase.auth().currentUser.uid
                 })
                 if (doc.data().password) {
                     if (sha256(this.state.existingPassword) == doc.data().password) {
                         await writeAllowedMember();
-                        if (!allowedRoomCheck) {
-                            await firestore.collection("users").doc(firebase.auth().currentUser.uid).set({allowedRoom: newAllowedRoom}, {merge: true})
-                        }
                         location.assign('/chat?roomId=' + this.state.existingRoomId);
                     } else {
                         alert("指定したルームは存在していないか、正しいパスワードが必要です。もう一度ルームIDとパスワードをお確かめください。")
                     }
                 } else {
-                    if (!allowedRoomCheck) {
-                        firestore.collection("users").doc(firebase.auth().currentUser.uid).set({allowedRoom: newAllowedRoom}, {merge: true})
-                    }
                     await writeAllowedMember();
-                    let a = this.state.existingRoomId;
-                    location.assign("/chat?roomId=" + a);
+                    const query = this.state.existingRoomId;
+                    location.assign("/chat?roomId=" + query);
                 }
             } else {
                 alert("指定したルームは存在していないか、正しいパスワードが必要です。もう一度ルームIDとパスワードをお確かめください。")
@@ -127,12 +108,11 @@ class Lobby extends React.Component<Props, State> {
         })
     }
 
-    createRoom = () => {
+    createRoom = async () => {
         let nowAllowedRoom: string[];
         firestore.collection("users").doc(firebase.auth().currentUser.uid).get().then((doc) => {
-            if (doc.data().allowedRoom) {
+            if (doc.data() && doc.data().allowedRoom) {
                 nowAllowedRoom = doc.data().allowedRoom;
-                alert(nowAllowedRoom);
             }
             if (!nowAllowedRoom) {
                 nowAllowedRoom = [this.state.newRoomID];
@@ -146,9 +126,10 @@ class Lobby extends React.Component<Props, State> {
                     name: this.state.newRoomName,
                     description: this.state.newDescription,
                     password: password,
-                    allowedMember: allowedMember
+                    allowedMember: allowedMember,
                 }).then(async () => {
                     await firestore.collection("users").doc(firebase.auth().currentUser.uid).set({allowedRoom: nowAllowedRoom}, {merge: true});
+                    await firestore.collection('rooms').doc(this.state.newRoomID).set({roomId:this.state.newRoomID});
                     location.assign('/chat?roomId=' + this.state.newRoomID);
                 })
             } else {
@@ -156,10 +137,10 @@ class Lobby extends React.Component<Props, State> {
                 firestore.collection("rooms").doc(this.state.newRoomID).collection("roomInfo").doc("roomInfo").set({
                     name: this.state.newRoomName,
                     description: this.state.newDescription,
-                    allowedMember:allowedMember
+                    allowedMember: allowedMember,
                 }).then(async () => {
-                    alert("come")
                     await firestore.collection("users").doc(firebase.auth().currentUser.uid).set({allowedRoom: nowAllowedRoom}, {merge: true});
+                    await firestore.collection('rooms').doc(this.state.newRoomID).set({roomId:this.state.newRoomID});
                     location.assign('/chat?roomId=' + this.state.newRoomID);
                 })
             }
